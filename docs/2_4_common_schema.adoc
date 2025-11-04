@@ -813,10 +813,10 @@ A tool may ignore this information. +
 _[However, it is convenient for a user that <<startTime>>, <<stopTime>>, <<tolerance>> and <<stepSize>> have already a meaningful default value for the model at hand.]_ +
 <<startTime>>, <<stopTime>> and <<stepSize>> refer to the unit of the <<independent>> variable.
 <<stepSize>> defines the preferred <<communicationStepSize>> for Co-Simulation.
-For Model Exchange and Scheduled Execution <<stepSize>> has no defined meaning. 
+For Model Exchange and Scheduled Execution <<stepSize>> has no defined meaning.
 _[This does not prohibit the use of <<stepSize>> in the context of Model Exchange._
 _For example, a fixed step size solver can use it as a default step size._
-_A variable step size solver can use the <<stepSize>> as an initial step size or as result grid for the output._ 
+_A variable step size solver can use the <<stepSize>> as an initial step size or as result grid for the output._
 _Since the required <<stepSize>> depends on the solver itself a defined meaning of <<stepSize>> for Model Exchange is impossible.]_
 
 [[ModelVariables,`<ModelVariables>`]]
@@ -1649,7 +1649,7 @@ latexmath:[{\dot{\mathbf{x}}_c := \mathbf{f}_{\mathit{der}}(\mathbf{x}_c, \mathb
 |`ClockedState`
 |
 [[ClockedState,`<ClockedState>`]]
-A <<ClockedState>> is part of the discrete state of a model partition and represented by a clocked variable.
+A <<ClockedState>> is part of the discrete-time state of a model partition and represented by a clocked variable.
 To which Clock or Clocks it belongs is described by the attribute <<clocks>> of that variable.
 Each <<ClockedState>> must have the attribute <<previous>> to represent the previous value of this <<ClockedState>>.
 All clocked states must have <<variability,`variability = discrete`>>, must have the attribute <<clocks>>, and must not be of type <<fmi3Clock>>.
@@ -1718,7 +1718,7 @@ Optional attribute defining the algebraic dependencies as list of value referenc
 For a real valued unknown and a real valued known, if the known is not listed among the dependencies then the partial derivative of the unknown with respect to that known is identically zero.
 If dependencies is not present, it must be assumed that the unknown depends on all knowns.
 If dependencies is present as empty list, the unknown depends on none of the knowns.
-_[The importer should not rely on self-dependencies to be explicitly listed, e.g., <<Output>>s that are continuous state(s) have an implicit self-dependency.]_
+_[The importer should not rely on self-dependencies to be explicitly listed, e.g., <<Output>>s that are continuous-time state(s) have an implicit self-dependency.]_
 Otherwise the unknown depends on the knowns defined by the given value references. +
 _[This means that all dependencies must be listed, also the dependencies of clocked variables on their clocks.]_ +
 Knowns latexmath:[{\mathbf{v}_{\mathit{known}}}] in <<EventMode>> and <<ContinuousTimeMode>> (ME) and at communication points (CS and SE) for <<Output>> and <<ContinuousStateDerivative>> elements are: +
@@ -1944,14 +1944,14 @@ An importer should connect terminals only if the number of member variables matc
 
 [[none,`none`]]
 |`none`
-|Matching of the variables is not intended by the creator of the FMU. 
+|Matching of the variables is not intended by the creator of the FMU.
 However, an importer may still connect terminals based on additional information.
 
 |====
 
 [[terminalKind,`terminalKind`]]
 The normalized string `terminalKind` is an optional attribute.
-Other standards may define terminal kinds. 
+Other standards may define terminal kinds.
 It is strongly recommended to use <<reverse-DNS, reverse domain name notation>> to define a `terminalKind`.
 It is intended that the `terminalKind` is used to define domain specific member variable sequences, member names and order, or high level restrictions for connections.
 

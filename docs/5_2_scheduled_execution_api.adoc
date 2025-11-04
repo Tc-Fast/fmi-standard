@@ -6,15 +6,15 @@ The state machine in <<figure-scheduled-execution-state-machine>> defines the al
 [#figure-scheduled-execution-state-machine]
 image::images/state-machine-scheduled-execution.svg[width=80%, align="center"]
 
-Common states are defined in <<common-state-machine>>, such as super states <<FMUStateSettable>> and  <<Initialized>>, states <<Instantiated>>, <<ConfigurationMode>>, <<ReconfigurationMode>>, <<InitializationMode>>, and <<Terminated>>.
+Common state machine modes are defined in <<common-state-machine>>, such as super modes <<FMUStateSettable>> and  <<Initialized>>, modes <<Instantiated>>, <<ConfigurationMode>>, <<ReconfigurationMode>>, <<InitializationMode>>, and <<Terminated>>.
 
 State changes are global to all model partitions, except to and from <<ClockUpdateMode>>.
-E.g. if any function call returns <<fmi3Discard>> or <<fmi3Error>>, all active or preempted model partitions are in the same state.
+E.g. if any function call returns <<fmi3Discard>> or <<fmi3Error>>, all active or preempted model partitions are in the same state machine mode.
 In Scheduled Execution, <<fmi3Discard>> must be treated like <<fmi3Error>>.
 
-If the simulation algorithm intends to enter the state <<Terminated>>, it must ensure that all function calls related to model partitions of the FMU have returned.
-If in states <<ClockActivationMode>>, <<ClockUpdateMode>>, or <<ReconfigurationMode>> a function returns <<fmi3Fatal>>, the importer may prematurely end all computations of model partitions of this FMU.
-If in these states a function returns <<fmi3Discard>> or <<fmi3Error>> the importer may wait until all other model partitions of this FMU have ended, but new model partitions must not be started and all other function calls for this FMU must return <<fmi3Error>> until the state <<Terminated>> is reached.
+If the simulation algorithm intends to enter the state machine mode <<Terminated>>, it must ensure that all function calls related to model partitions of the FMU have returned.
+If in state machine modes <<ClockActivationMode>>, <<ClockUpdateMode>>, or <<ReconfigurationMode>> a function returns <<fmi3Fatal>>, the importer may prematurely end all computations of model partitions of this FMU.
+If in these state machine modes a function returns <<fmi3Discard>> or <<fmi3Error>> the importer may wait until all other model partitions of this FMU have ended, but new model partitions must not be started and all other function calls for this FMU must return <<fmi3Error>> until the state machine mode <<Terminated>> is reached.
 
 ==== State: Clock Activation Mode [[ClockActivationMode,*Clock Activation Mode*]]
 
@@ -46,7 +46,7 @@ The importer may then activate potential sinks (e.g. a model partition of anothe
 a|When an input Clock latexmath:[k_i] ticks, activate the corresponding model partition:
 
 * latexmath:[(\mathbf{y}_{d,k_i}, \mathbf{x}_{d,k_i}, \mathbf{w}_{d,k_i}) := \mathbf{f}_{\mathit{activate}}({}^{\bullet}\mathbf{x}_{d}, \mathbf{w}_d, \mathbf{u}_{d}, \mathbf{p},k_i)] +
-* Update previous values of discrete states of the corresponding model partition: latexmath:[{}^\bullet\mathbf{x}_{d,k_i} := \mathbf{x}_{d,k_i}].
+* Update previous values of discrete-time states of the corresponding model partition: latexmath:[{}^\bullet\mathbf{x}_{d,k_i} := \mathbf{x}_{d,k_i}].
 |<<fmi3ActivateModelPartition>>
 
 |====
