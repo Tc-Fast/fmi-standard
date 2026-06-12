@@ -968,12 +968,14 @@ Output clocks may depend on input Clocks and other variables.
 Such <<dependencies>> are declared in the <<ModelStructure>>.
 A Clock latexmath:[k] depends on a Clock or variable latexmath:[v] if an activation or the value of latexmath:[v] may cause an activation of latexmath:[k] during the same super-dense time instant.
 
-Declaring a variable as <<clocked-variable,clocked variable>> using the <<clocks>> attribute specifies a <<dependencies,dependency>> too, but also declares that such a clocked variable can only be <<get-and-set-variable-values,accessed>> when one of the referenced Clocks is active.
+Declaring a variable as <<clocked-variable,clocked variable>> using the <<clocks>> attribute declares an activation dependency: such a clocked variable can only be <<get-and-set-variable-values,accessed>> when one of the referenced Clocks is active.
 This also holds for <<clocked-variable,clocked variables>> of type <<Clock>>.
+The <<clocks>> attribute does not declare an algebraic dependency; Clocks listed in <<clocks>> must not be listed in <<dependencies>>.
 
 [NOTE]
 ====
-This means that variables referenced by <<clocks>> and <<dependencies>> are not strict subsets of one another because <<clocks>> may list output Clocks that are not part of the latexmath:[{\mathbf{v}_{\mathit{known}}}].
+<<dependencies>> for clocked variables must only list knowns with a genuine simultaneous algebraic relationship at the same super-dense time instant.
+An importer must only consider a declared <<dependencies,dependency>> as a candidate for algebraic loop detection if the Clocks of the unknown and the known can be simultaneously active.
 ====
 
 ===== Clocks specific API
