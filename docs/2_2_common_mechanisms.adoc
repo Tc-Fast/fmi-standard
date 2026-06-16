@@ -968,12 +968,14 @@ Output clocks may depend on input Clocks and other variables.
 Such <<dependencies>> are declared in the <<ModelStructure>>.
 A Clock latexmath:[k] depends on a Clock or variable latexmath:[v] if an activation or the value of latexmath:[v] may cause an activation of latexmath:[k] during the same super-dense time instant.
 
-Declaring a variable as <<clocked-variable,clocked variable>> using the <<clocks>> attribute specifies a <<dependencies,dependency>> too, but also declares that such a clocked variable can only be <<get-and-set-variable-values,accessed>> when one of the referenced Clocks is active.
+Declaring a variable as <<clocked-variable,clocked variable>> using the <<clocks>> attribute declares that such a clocked variable can only be <<get-and-set-variable-values,accessed>> when one of the referenced Clocks is active.
 This also holds for <<clocked-variable,clocked variables>> of type <<Clock>>.
+The association between a clocked variable and its Clocks is expressed solely by the <<clocks>> attribute and must not be repeated as a <<dependencies,dependency>> in the <<ModelStructure>>.
 
 [NOTE]
 ====
-This means that variables referenced by <<clocks>> and <<dependencies>> are not strict subsets of one another because <<clocks>> may list output Clocks that are not part of the latexmath:[{\mathbf{v}_{\mathit{known}}}].
+The <<clocks>> attribute and <<dependencies>> serve different purposes: <<clocks>> declares when a variable can be accessed, while <<dependencies>> declares algebraic dependencies on known variables.
+The Clocks referenced by the <<clocks>> attribute and the variables listed in <<dependencies>> are therefore disjoint.
 ====
 
 ===== Clocks specific API
@@ -1256,8 +1258,8 @@ Dependencies between variables of an FMU:
 * associate event indicators with variables, and
 * define the sparseness when computing <<partial-derivatives,partial derivatives>>, avoiding unnecessary calls to <<fmi3GetDirectionalDerivative>> and <<fmi3GetAdjointDerivative>>.
 
-Note, the dependencies between <<clocked-variable,clocked variables>> and their <<Clock,Clocks>> are defined by the attribute <<clocks>> in `<fmiModelDescription><ModelVariables>`.
-Compared to <<dependencies>>, <<clocks>> declared dependencies also restrict when <<clocked-variable,clocked variables>> can be <<get-and-set-variable-values,accessed>>.
+Note, the association between <<clocked-variable,clocked variables>> and their <<Clock,Clocks>> is defined by the attribute <<clocks>> in `<fmiModelDescription><ModelVariables>` and must not be listed in <<dependencies>>.
+The <<clocks>> attribute restricts when <<clocked-variable,clocked variables>> can be <<get-and-set-variable-values,accessed>>; it does not by itself declare an algebraic dependency.
 
 The <<dependencies>> are encoded in the <<modelDescription.xml>> with the element <<ModelStructure>> and:
 
@@ -1391,6 +1393,15 @@ include::examples/snippets.c[tags=AlgebraicLoop3]
 ====
 
 When solving algebraic loops in <<EventMode>>, limitations to variable manipulations declared with attribute <<canHandleMultipleSetPerTimeInstant>> must be observed.
+
+A dependency declared in <<dependencies>> between <<clocked-variable,clocked variables>> only contributes to an algebraic loop while the variables involved can be accessed at the same super-dense time instant, that is, while their respective <<clocks>> are simultaneously active.
+Therefore, the importer must take the activation of the <<clocks>> declared via the <<clocks>> attribute into account when forming algebraic loop candidates across connected FMUs: a declared dependency between two clocked variables forms a loop candidate only if their Clocks can be active at the same super-dense time instant.
+
+[NOTE]
+====
+Consider a gain FMU whose <<input>> is clocked on Clock `A` and whose <<output>> is clocked on Clock `B`, with the <<output>> declaring a <<dependencies,dependency>> on the <<input>>.
+If `A` and `B` are never active at the same super-dense time instant, no algebraic loop can form in a feedback connection, even though the dependency is declared.
+====
 
 ==== Getting Partial Derivatives [[partial-derivatives]]
 
